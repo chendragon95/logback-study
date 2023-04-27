@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 模拟logback默认配置 ch.qos.logback.classic.BasicConfigurator -->
+
+	<!-- 控制台输出 -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+			<layout class="ch.qos.logback.classic.layout.TTLLLayout"/>
+		</encoder>
+	</appender>
+
+	<!--系统操作日志-->
+    <root level="debug">
+        <appender-ref ref="console" />
+    </root>
+</configuration>

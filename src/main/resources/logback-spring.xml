@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 配置详情: https://blog.csdn.net/weixin_41377777/article/details/120962037 -->
+<!-- 拷贝即可使用: 额外需要关注的就三个点, 1.配置spring.application.name可指定文件前缀名 2.修改dev的springProfile中自定义logger的name指定当前项目 3.修改rollingPolicy的MaxHistory确定日志保留数 -->
+
+<configuration>
+	<property name="LOG_PATH" value="/apps/logs" />
+	<property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %highlight(%level) [%C{36}.%M:%line] tid=%X{traceId}, %msg%n" />
+	<springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="defaultAppName"/>
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<!--本地环境 -->
+	<springProfile name="dev">
+		<logger name="com.chenlongji" level="DEBUG" />
+		<!--<logger name="org.mybatis" level="DEBUG" />-->
+
+		<root level="INFO">
+			<appender-ref ref="CONSOLE" />
+		</root>
+	</springProfile>
+
+	<!--测试环境 -->
+	<springProfile name="test">
+		<!-- 备注: 若springProfile仅激活一个, 那appender的name重复也不影响, 因为没激活的profile里面的appender不会进行初始化 -->
+		<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<!-- layout使用encoder配置应该也行, 如CONSOLE的配置 -->
+			<layout class="ch.qos.logback.classic.PatternLayout">
+				<pattern>${LOG_PATTERN}</pattern>
+			</layout>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<FileNamePattern>${LOG_PATH}/${APP_NAME}.%d{yyyy-MM-dd}.log</FileNamePattern>
+				<MaxHistory>1</MaxHistory>
+			</rollingPolicy>
+		</appender>
+
+		<root level="INFO">
+			<appender-ref ref="FILE" />
+		</root>
+	</springProfile>
+
+	<!--生产环境 -->
+	<springProfile name="prd">
+		<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<layout class="ch.qos.logback.classic.PatternLayout">
+				<pattern>${LOG_PATTERN}</pattern>
+			</layout>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<FileNamePattern>${LOG_PATH}/${APP_NAME}.%d{yyyy-MM-dd}.log</FileNamePattern>
+				<MaxHistory>7</MaxHistory>
+			</rollingPolicy>
+		</appender>
+
+		<root level="INFO">
+			<appender-ref ref="FILE" />
+		</root>
+	</springProfile>
+
+</configuration>

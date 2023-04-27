@@ -1,0 +1,7 @@
+server:
+  port: 8012
+spring:
+  application:
+    name: logback-study
+  profiles:
+    active: dev
